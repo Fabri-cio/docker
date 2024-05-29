@@ -1,0 +1,209 @@
+1 ver las imagenes instaladas
+    docker images 
+
+listar imagenes por el id
+    docker images -aq
+
+eliminar todas la imagenes
+    docker rmi ${docker images -aq}
+
+
+2 ver una lista de los contenedores que se estan ejecutando
+    docker ps
+
+
+3 muestra todos los contenedores tanto los que estan en ejecucion y los que sean detenido
+Esto inclye contenedores que se an ejecutado en algun momento y han finalizado su ejecucion
+    docker ps -a
+nota: Cuando ejecutas contenedores a partir de una misma imagen, Docker genera nombres únicos para cada instancia de contenedor, incluso si se basan en la misma imagen. Esto es para evitar conflictos y permitir que múltiples instancias del mismo contenedor se ejecuten simultáneamente sin interferir entre sí.
+Por lo tanto, si ejecutas varios contenedores a partir de la misma imagen, verás que cada uno tiene un nombre único asignado por Docker. Estos nombres pueden ser generados automáticamente por Docker si no se especifica uno manualmente al crear el contenedor. La razón por la que los nombres son diferentes es para garantizar que cada instancia de contenedor tenga un identificador único dentro del sistema Docker.
+
+:para ver lista de ids de contenedores
+    docker ps -aq
+
+
+4 se utiliza para borrar uno o varios contenedores. Esto quiere decir que elimina la instancia del constenedor pero no afecta la imagen que se utilizo para crear el contenedor.
+
+4.1 por el nombre del contenedor(instancia) 
+    docker rm nombre_del_contenedor
+
+4.2 por el id del contenedor
+    docker rm id_del_contenedor
+
+4.3 multiples contenedores
+    docker rm cont_1 cont_2
+
+4.4 eliminar todos los contenedores por el resultado de los ids
+    docker rm $(docker ps -aq)
+
+4.5 eliminar una imagen
+    docker rmi nombre_imagen o id
+         
+
+5 se utiliza para iniciar uno o varios contenedores (desde el estado en que se detuvieron o en el estado que estaban) osea iniciar contenedores ya existentes
+    docker start id_del_contenedor nombre_contenedor
+
+
+6 se utiliza para detener los contenedores de manera amigable
+    docker stop id_del_contenedor nombre_del_contenedor
+
+    :parar todos los contenedores con el valor de los ids(lista)
+    docker stop $(docker ps -aq)
+
+7 se utiliza para crear y ejecutar un nuevo contenedor Docker a partir de una imagen. Este comando se utiliza para crear contenedores nuevos y puede aceptar una amplia variedad de opciones y parámetros para configurar el contenedor, como la asignación de puertos, la conexión de volúmenes, la configuración de 
+
+variables de entorno, entre otros.
+    docker run [opciones] nombre_de_la_imagen [comando] [argumentos]
+ejemplo:
+    docker run -it ubuntu bash
+
+
+8 Para acceder al puerto de NGINX dentro de un contenedor Docker a través de un puerto en tu máquina local, necesitas mapear el puerto del contenedor al puerto de tu host al ejecutar el contenedor con:
+    docker run -p 3000:80 nginx(nombre_de_la_imagen)
+-p 8080:80: Esta opción mapea el puerto 80 del contenedor (donde NGINX normalmente escucha las solicitudes web) al puerto 8080 de tu máquina host. Esto significa que las solicitudes que lleguen al puerto 8080 de tu máquina host se redirigirán al puerto 80 del contenedor.
+
+:para que no se bloque la consola y se ejecute en segundo plano -d
+    docker run -p 3000:80 -d nginx(nombre_de_la_imagen)
+
+
+9 eliminar todos los contenedores con el valor de todas las listas de contenedores
+docker rm $(docker ps -aq)    nota:solo en linux
+     
+
+10 ejecutar multiples puertos para un constenedor solo creamos un proceso (mapear diferentes puertos a un contenedor)  (buena practica es crear diferentes contenedores y puertos especificos para los servicios)
+docker run -p 80:80 -p 3000:80 -p 4000:80 -p 5000:80 -d nginx   (todo se creare en vase a un solo nombre)
+
+
+11 ejecutar una instancia(contenedor) en base a una imagen(si no esta descargada la descarga y la inicia)
+    docker run -p 80:80 -d httpd(apache)
+
+
+12 ahora poniendo nombre al contenedor mas variable de entorno
+docker run -d -3000:3306 --name mydatabase -e MYSQL_ROOT_PASSWORD=contraseña mysql
+
+:nota la variable -e se saco de la documentacion
+:nota el nombre --name tambien de la documentacion
+:nota mysql:tag tambien nos dice que de la ducumentacion sacamos la vercion
+
+
+13 forzar la detencion y eliminar el contenedor
+docker rm mydatabase -f
+
+
+14 podemos alterar la forma de ver la imformacion de los contenedores
+pero solo con linux
+
+
+15 Esto es útil para desarrollar y probar sitios web localmente usando Nginx dentro de un contenedor Docker.
+    docker run -p 80:80 --name website -v ${pwd}:/user/share/nginx/html:ro -d nginx
+    -v  Especifica un volumen para montar. Los volúmenes en Docker permiten compartir datos entre el host y el contenedor, o entre contenedores.
+
+    :ro Indica que el volumen montado es de solo lectura (read-only). Esto significa que el contenedor puede leer los archivos en este directorio, pero no puede modificarlos.
+
+    ejemplo:
+    docker exec -it website bash
+
+    Desglose del comando:
+    docker: Este es el comando principal de Docker, utilizado para interactuar con el motor de Docker.
+
+    exec: Esta subcomando se usa para ejecutar un nuevo comando en un contenedor que ya está en ejecución.
+
+    -i: Significa "interactivo" (interactive). Esta opción mantiene la entrada estándar (stdin) abierta, permitiendo que interactúes con el contenedor.
+
+    -t: Significa "terminal" (tty). Esta opción asigna un pseudo-TTY, proporcionando una terminal para que la sesión sea interactiva. Combinado con -i, permite una experiencia de terminal completa.
+
+    website: Este es el nombre del contenedor en el que quieres ejecutar el comando. En tu caso, el contenedor se llama website.
+
+    bash: Este es el comando que deseas ejecutar dentro del contenedor. bash inicia una shell Bash en el contenedor, permitiéndote ejecutar comandos dentro de él.
+
+    ¿Qué hace este comando?
+    Cuando ejecutas docker exec -it website bash, Docker:
+
+    Encuentra el contenedor en ejecución llamado website.
+    Inicia una sesión interactiva de Bash dentro de ese contenedor.
+    Te proporciona una terminal en la que puedes escribir comandos y ver sus salidas, como si estuvieras trabajando directamente en el sistema operativo del contenedor.
+
+    Ventajas de docker exec -it:
+
+    Depuración: Puedes entrar en un contenedor para ver qué está sucediendo, inspeccionar archivos de configuración, logs, etc.
+
+    Administración: Permite hacer cambios administrativos sin necesidad de detener y reiniciar el contenedor.
+
+    Desarrollo y pruebas: Útil para desarrolladores que necesitan probar comandos o scripts dentro del entorno del contenedor.
+
+    Resumen:
+    El comando docker exec -it website bash abre una sesión interactiva de Bash dentro del contenedor llamado website, permitiéndote ejecutar comandos directamente en el contenedor como si estuvieras en una terminal Linux. Esto es extremadamente útil para tareas de administración, depuración y desarrollo dentro del contenedor.
+
+
+16 docker run -p 80:80 --name website -v ${pwd}:/user/share/nginx/html -d nginx
+    Sin :ro (Read-Write):
+        El volumen montado es de lectura y escritura.
+
+        El contenedor puede leer y escribir en el directorio ${pwd} del host.
+
+        Esto significa que cualquier cambio realizado en /usr/share/nginx/html dentro del contenedor se reflejará en ${pwd} en el host.
+
+        Esta configuración es útil si necesitas que el contenedor realice modificaciones en los archivos, como escribir logs, cargar archivos, o cualquier otra operación que requiera acceso de escritura.
+
+        docker exec -it website bash     
+        cd /usr/share/nginx/html      situarnos entrar
+        ls                            listar
+        touch services.html           crear
+
+        ahora podemos entrar al sistemas de nginx y podemos modificar y leer archivos
+        y reflejar los cambios en el anfitrion(host) como en el contenedor
+
+
+17 -----------------------   Dockerfile  -------------
+    generamos un archivo Dockerfile
+    ver en el archivo.....
+
+situandonos en el directorio:
+    construimos nuestra imagen:
+    
+        docker build -t wilfab .
+
+
+docker:
+Es el comando principal de Docker, utilizado para interactuar con el motor de Docker y gestionar contenedores, imágenes, volúmenes, redes, etc.
+
+build:
+Es el subcomando de Docker utilizado para construir una nueva imagen Docker a partir de un Dockerfile.
+
+-t wilfab:
+La opción -t es una abreviatura de --tag, que se utiliza para asignar un nombre y una etiqueta (tag) a la imagen que estás construyendo.
+wilfab es el nombre que le estás dando a la imagen resultante. Puedes pensar en esto como el "nombre" de la imagen que luego usarás para ejecutar contenedores.
+
+.:
+El punto (.) indica el contexto de construcción, que es el directorio actual.
+Docker busca un archivo Dockerfile en este directorio para saber cómo construir la imagen.
+
+Pasos que realiza este comando:
+
+Contexto de construcción:
+Docker recopila el contexto de construcción del directorio actual, lo que incluye el Dockerfile y todos los archivos y subdirectorios en el directorio actual.
+Docker envía este contexto al motor Docker para el proceso de construcción.
+
+Leer el Dockerfile:
+Docker busca un archivo llamado Dockerfile en el directorio actual.
+Docker lee las instrucciones dentro del Dockerfile.
+
+Construir la imagen:
+Docker ejecuta cada instrucción en el Dockerfile, creando capas intermedias para cada instrucción.
+Por ejemplo, si el Dockerfile contiene instrucciones como FROM, COPY, RUN, etc., Docker ejecutará estos comandos en secuencia.
+Cada capa intermedia se guarda en el sistema de almacenamiento de Docker y se utiliza para optimizar el proceso de construcción y reutilización de capas.
+
+Asignar la etiqueta:
+Una vez que Docker ha completado todas las instrucciones del Dockerfile, la imagen resultante se etiqueta con el nombre wilfab.
+Esta etiqueta permite referenciar la imagen fácilmente más tarde.
+
+18------- subir al Docker Hub nuestra imagen------------------
+
+    docker build -t wil777/wilfab .
+    pero con el nombre de perfil del dockerhub osea wil777/nombre_de_la_imagen
+
+    docker login
+    loguearse pedira username y password
+
+    docker push wil777/wilfab
+    subir la imagen a nuestra cuenta de docker hub

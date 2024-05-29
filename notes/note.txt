@@ -1,0 +1,18 @@
+1 una imagen es como un istalador
+2 pagina de imagenes
+3 no vamos a instalar programas --> si no que docker proveera instaladores
+4 las imagenes son inmutables no se pueden alterar
+5 las imagenes son creadas con dockerFile
+6 un archivo DOCKERFILE -> es un archibo que utiliza docker para leer una configuracion
+    (son las instrucciones que lo que tiene que hacer para que funcione)
+7 docker hub -> pagina lista de imagenes que podemos descargar
+
+8 contenedor -> es un espacion donde ira la aplicacion con todos los programas que necesita
+9 un contenedor es la ejecucion de una instancia de una imagen 
+10 hemos instalado imagenes no las utilizamos solo las descargamos 
+11 el comando run es ejecutar procesos a partir de la imagen 
+12 estos procesos se los conose como contenedores
+13 apartir de las imagenes ejecutamos contenedores
+14 podemos ejecutar multiples contenedores en una sola maquina depende:
+    : de los recuros de la computadora
+    : en servidor eso no importa podemos ejecutar cientos de contenedores   
